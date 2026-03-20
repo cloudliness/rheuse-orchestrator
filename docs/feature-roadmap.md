@@ -7,7 +7,7 @@
 | 0 | Planning & Design | **Complete** | Open questions resolved, agent system operational |
 | 1 | Brand & Product Definition | **Complete** | Brand name: Rheuse, guidelines, tone of voice, 30-SKU product catalog |
 | 2 | Static Catalog & Design System | **Complete** | Design tokens, component library, product pages, category pages |
-| 3 | Cart & Checkout Flow | Not started | Cart functionality, checkout form, address validation |
+| 3 | Cart & Checkout Flow | **Complete** | Cart functionality, checkout form, address validation |
 | 4 | Payments + Orders + Emails | Not started | Stripe integration, order lifecycle, confirmation emails |
 | 5 | Legal, SEO, Performance, A11y | Not started | Legal pages, meta tags, Lighthouse ≥ 90, WCAG 2.2 AA |
 | 6 | Launch + Post-launch Iteration | Not started | Production deployment, monitoring, iteration based on data |
@@ -43,11 +43,11 @@
 
 ## Phase 3 — Cart & Checkout Flow
 
-- [ ] Cart state management (add, remove, update quantity)
-- [ ] Cart drawer or page UI
-- [ ] Checkout form (shipping address, contact info)
-- [ ] Form validation
-- [ ] Order summary component
+- [x] Cart state management (add, remove, update quantity)
+- [x] Cart drawer or page UI
+- [x] Checkout form (shipping address, contact info)
+- [x] Form validation
+- [x] Order summary component
 
 ## Phase 4 — Payments + Orders + Emails
 
