@@ -4,7 +4,6 @@ import Link from "next/link";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import ProductCard from "@/components/product-card";
-import { Button } from "@/components/ui/button";
 import {
   getAllProducts,
   getProductBySlug,
@@ -12,6 +11,7 @@ import {
   getCategoryName,
   getCategorySlug,
 } from "@/lib/products";
+import AddToCartButton from "@/components/add-to-cart-button";
 
 interface ProductPageProps {
   params: Promise<{ category: string; slug: string }>;
@@ -139,15 +139,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </p>
             </div>
 
-            {/* Add to cart (disabled) */}
-            <Button
-              variant="primary"
-              size="lg"
-              className="w-full mt-6"
-              disabled
-            >
-              Coming Soon
-            </Button>
+            {/* Add to cart */}
+            <AddToCartButton product={product} />
           </div>
         </div>
 

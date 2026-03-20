@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Serif_Display, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
+import { CartProvider } from "@/lib/cart";
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: "400",
@@ -44,7 +45,9 @@ export default function RootLayout({
         jetBrainsMono.variable
       )}
     >
-      <body className="font-body antialiased">{children}</body>
+      <body className="font-body antialiased">
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 }

@@ -568,6 +568,233 @@ Desktop (1024px+):
 
 ---
 
+## Checkout Page
+
+### Section Order
+
+1. Header (sticky)
+2. Checkout Title
+3. Checkout Content (Form + Order Summary)
+4. Trust Signals
+5. Footer
+
+### Section Details
+
+#### 1. Header
+- Standard sticky header
+
+#### 2. Checkout Title
+- Padding: `pt-6 sm:pt-8 pb-6 sm:pb-8`
+- Title: "Checkout" — `font-heading text-3xl sm:text-4xl text-foreground`
+
+#### 3. Checkout Content — Form + Order Summary
+
+**Layout:**
+
+| Breakpoint | Layout |
+|------------|--------|
+| Mobile (< 1024px) | Stacked: form above, order summary below |
+| lg (1024px+) | Side-by-side: `grid grid-cols-[1fr_380px] gap-8 lg:gap-12 items-start` |
+
+**Checkout Form:**
+- Container: `space-y-8`
+- Each form section uses a `<fieldset>` with a `<legend>` styled as a section heading
+
+**Section heading pattern (reused across form sections):**
+- `font-heading text-xl text-foreground mb-4`
+
+**A. Contact Information**
+- Heading: "Contact information"
+- Fields:
+  - Email: `<label>` "Email address" — Input `default w-full`, `type="email"`, `autocomplete="email"`
+  - Helper text: `text-xs text-muted-foreground mt-1` — "We'll send your order confirmation here"
+
+**B. Shipping Address**
+- Heading: "Shipping address"
+- Fields container: `grid grid-cols-1 sm:grid-cols-2 gap-4`
+- Fields:
+  - First name: Input `default`, `autocomplete="given-name"` — spans 1 column
+  - Last name: Input `default`, `autocomplete="family-name"` — spans 1 column
+  - Address line 1: Input `default`, `autocomplete="address-line1"`, placeholder "Street address" — `sm:col-span-2` (full width)
+  - Address line 2: Input `default`, `autocomplete="address-line2"`, placeholder "Apt, suite, unit, etc. (optional)" — `sm:col-span-2` (full width)
+  - City: Input `default`, `autocomplete="address-level2"` — spans 1 column
+  - State: `<select>` dropdown with US states, `autocomplete="address-level1"` — spans 1 column
+    - Styled to match Input dimensions: `h-10 px-3 py-2 rounded-lg border border-foreground/20 bg-background text-foreground text-base sm:text-sm font-body`
+  - ZIP code: Input `default`, `autocomplete="postal-code"`, `inputmode="numeric"`, `pattern="[0-9]{5}(-[0-9]{4})?"` — spans 1 column on sm+, full width on mobile
+- Country note: `text-xs text-muted-foreground mt-2 sm:col-span-2` — "Currently shipping within the United States only"
+
+**C. Shipping Method**
+- Heading: "Shipping method"
+- Container: `rounded-xl border border-foreground/10 p-4`
+- Single option (radio, pre-selected):
+  - Layout: `flex items-start gap-3`
+  - Radio input: `mt-0.5` (aligns with first text line)
+  - Label area: `flex-1`
+    - Method name: `text-sm font-medium text-foreground font-body` — "Standard Shipping"
+    - Description: `text-xs text-muted-foreground mt-0.5` — "5–7 business days"
+  - Price: `text-sm font-medium text-foreground font-body flex-shrink-0` — "Free" or "$5.99"
+- Free shipping note: `text-xs text-muted-foreground mt-3` — "Free shipping on orders over $50"
+
+**D. Place Order**
+- Button: `accent lg w-full mt-8` — "Place order"
+- Disabled state: `opacity-50 pointer-events-none cursor-not-allowed`
+- Phase note below button: `text-xs text-muted-foreground text-center mt-2` — "Payment integration coming in Phase 4"
+- When payment is live (Phase 4+), this button submits to Stripe Checkout
+
+**Order Summary (sidebar):**
+- Container: `bg-secondary rounded-xl p-6` on desktop; on mobile, full-width section below form
+- Sticky on desktop: `lg:sticky lg:top-24` (below header height + gap)
+- Heading: "Order summary" — `font-heading text-xl text-foreground mb-4`
+- Item list (read-only, no quantity controls):
+  - Each item: `flex gap-4 py-3 border-b border-foreground/10 last:border-b-0`
+  - Image: `w-16 h-16 rounded-lg object-cover bg-muted flex-shrink-0`
+  - Info area: `flex-1 min-w-0`
+    - Product name: `text-sm font-medium text-foreground font-body line-clamp-1`
+    - Variant/quantity: `text-xs text-muted-foreground mt-0.5` — e.g., "350ml / Forest · Qty: 2"
+  - Line price: `text-sm font-medium text-foreground flex-shrink-0 self-start`
+- Divider: `border-t border-foreground/10 my-4`
+- Cost breakdown:
+  - Subtotal: `flex justify-between text-sm font-body`
+  - Shipping: `flex justify-between text-sm font-body` — "Free" or "$5.99"
+  - Divider: `border-t border-foreground/10 my-4`
+  - Total: `flex justify-between text-base font-bold font-body`
+
+#### 4. Trust Signals
+- Position: Below checkout content, above footer
+- Padding: `py-8`
+- Layout: `flex flex-wrap justify-center gap-6 sm:gap-8`
+- Each signal: `flex items-center gap-2 text-xs text-muted-foreground font-body`
+  - Icon: 16px, `text-muted-foreground` — use Lucide icons (e.g., `Lock`, `RotateCcw`, `Truck`, `ShieldCheck`)
+  - Text examples: "Secure checkout", "Free returns within 30 days", "Free shipping over $50", "Stripe-powered payments"
+
+#### 5. Footer
+- Standard footer organism
+
+### Accessibility
+- Form structure: each section wrapped in `<fieldset>` with visible `<legend>` (styled as section heading)
+- All inputs: visible `<label>` linked via `htmlFor`/`id`, `aria-required="true"` for required fields
+- Required indicator: asterisk (`*`) appended to label or "(required)" for screen readers via `aria-label`
+- Error messages: `aria-invalid="true"` on field + `aria-describedby` pointing to error `<p id="...">`
+- Email helper text: linked to input via `aria-describedby`
+- State `<select>`: includes empty default option "Select state" with `disabled selected`
+- Shipping method: `<fieldset>` with `<legend>` "Shipping method", radio inputs linked to labels
+- Place order button: `aria-disabled="true"` when disabled (not `disabled` attribute, for screen reader visibility)
+- Order summary: `aria-label="Order summary"` on container, item list as `<ul>` with `<li>` per item
+- Live region: `aria-live="polite"` on cost breakdown for dynamic shipping/total updates
+- Focus management: on page load, focus moves to first form field (email)
+
+### Responsive Reflow
+
+```
+Mobile (< 1024px):
+┌──────────────────────────┐
+│ Header                   │
+├──────────────────────────┤
+│ Checkout                 │
+├──────────────────────────┤
+│ Contact information      │
+│ ┌──────────────────────┐ │
+│ │ Email address        │ │
+│ └──────────────────────┘ │
+│                          │
+│ Shipping address         │
+│ ┌──────────────────────┐ │
+│ │ First name           │ │
+│ └──────────────────────┘ │
+│ ┌──────────────────────┐ │
+│ │ Last name            │ │
+│ └──────────────────────┘ │
+│ ┌──────────────────────┐ │
+│ │ Address line 1       │ │
+│ └──────────────────────┘ │
+│ ┌──────────────────────┐ │
+│ │ Address line 2       │ │
+│ └──────────────────────┘ │
+│ ┌──────────────────────┐ │
+│ │ City                 │ │
+│ └──────────────────────┘ │
+│ ┌──────────────────────┐ │
+│ │ State                │ │
+│ └──────────────────────┘ │
+│ ┌──────────────────────┐ │
+│ │ ZIP code             │ │
+│ └──────────────────────┘ │
+│ 🇺🇸 US only              │
+│                          │
+│ Shipping method          │
+│ ┌──────────────────────┐ │
+│ │ (●) Standard   Free  │ │
+│ │     5–7 days         │ │
+│ └──────────────────────┘ │
+│ Free over $50            │
+│                          │
+│ [    Place order       ] │
+│ Payment coming Phase 4   │
+├──────────────────────────┤
+│ ┌──────────────────────┐ │
+│ │ Order summary        │ │
+│ │ ┌────┐ Product   $27 │ │
+│ │ │ img│ Qty: 1        │ │
+│ │ └────┘               │ │
+│ │ ────────────────────│ │
+│ │ Subtotal      $62.97 │ │
+│ │ Shipping        Free │ │
+│ │ ──────────────────── │ │
+│ │ Total         $62.97 │ │
+│ └──────────────────────┘ │
+├──────────────────────────┤
+│ 🔒 Secure  ↩ Returns    │
+│ 🚚 Free ship  🛡 Stripe │
+├──────────────────────────┤
+│ Footer                   │
+└──────────────────────────┘
+
+Desktop (1024px+):
+┌──────────────────────────────────────────┐
+│ Header                                   │
+├──────────────────────────────────────────┤
+│ Checkout                                 │
+├──────────────────────────────┬───────────┤
+│ Contact information          │ Order     │
+│ ┌──────────────────────────┐ │ summary   │
+│ │ Email address            │ │           │
+│ └──────────────────────────┘ │ ┌───┐     │
+│                              │ │img│ $27 │
+│ Shipping address             │ └───┘     │
+│ ┌────────────┬─────────────┐ │ ┌───┐     │
+│ │ First name │ Last name   │ │ │img│ $35 │
+│ └────────────┴─────────────┘ │ └───┘     │
+│ ┌──────────────────────────┐ │ ┌───┐     │
+│ │ Address line 1           │ │ │img│ $13 │
+│ └──────────────────────────┘ │ └───┘     │
+│ ┌──────────────────────────┐ │ ──────── │
+│ │ Address line 2           │ │ Subtotal │
+│ └──────────────────────────┘ │   $62.97 │
+│ ┌────────────┬─────────────┐ │ Shipping │
+│ │ City       │ State       │ │   Free   │
+│ └────────────┴─────────────┘ │ ──────── │
+│ ┌────────────┐               │ Total    │
+│ │ ZIP code   │ 🇺🇸 US only   │   $62.97 │
+│ └────────────┘               │          │
+│                              │          │
+│ Shipping method              │          │
+│ ┌──────────────────────────┐ │          │
+│ │ (●) Standard Shipping    │ │          │
+│ │     5–7 days       Free  │ │          │
+│ └──────────────────────────┘ │          │
+│ Free over $50                │          │
+│                              │          │
+│ [      Place order         ] │          │
+│ Payment coming Phase 4       │          │
+├──────────────────────────────┴───────────┤
+│    🔒 Secure · ↩ Returns · 🚚 Ship · 🛡 │
+├──────────────────────────────────────────┤
+│ Footer                                   │
+└──────────────────────────────────────────┘
+```
+
+---
+
 ## Global Layout Notes
 
 ### Skip Link

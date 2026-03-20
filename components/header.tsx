@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
+import { useCart } from "@/lib/cart";
 
 const NAV_LINKS = [
   { label: "Shop", href: "/products" },
@@ -12,6 +13,7 @@ const NAV_LINKS = [
 
 export default function Header() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const { cartCount } = useCart();
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-foreground/5 bg-background/95 backdrop-blur-sm transition-shadow duration-200">
@@ -56,11 +58,19 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Spacer for centering on desktop */}
-        <div className="hidden lg:block w-[72px]" />
-
-        {/* Placeholder right area on mobile for balance */}
-        <div className="lg:hidden w-9" />
+        {/* Cart icon */}
+        <Link
+          href="/cart"
+          className="relative p-2 -mr-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg"
+          aria-label={`Shopping bag${cartCount > 0 ? `, ${cartCount} items` : ''}`}
+        >
+          <ShoppingBag className="size-5" />
+          {cartCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-accent text-accent-foreground text-xs font-bold font-body">
+              {cartCount > 99 ? '99+' : cartCount}
+            </span>
+          )}
+        </Link>
       </div>
 
       {/* Mobile nav drawer */}
