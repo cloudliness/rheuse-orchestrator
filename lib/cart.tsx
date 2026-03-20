@@ -51,6 +51,8 @@ function saveCart(items: CartItem[]) {
   } catch {
     // localStorage might be full or unavailable
   }
+  // Invalidate cached snapshot so getCartSnapshot returns fresh data
+  cachedSnapshot = items;
   // Notify useSyncExternalStore subscribers
   cartStoreListeners.forEach((listener) => listener());
 }
@@ -58,6 +60,7 @@ function saveCart(items: CartItem[]) {
 // External store for cart items (bridges localStorage ↔ React)
 const cartStoreListeners = new Set<() => void>();
 const emptyCart: CartItem[] = [];
+let cachedSnapshot: CartItem[] | null = null;
 
 function subscribeToCart(listener: () => void) {
   cartStoreListeners.add(listener);
@@ -65,7 +68,10 @@ function subscribeToCart(listener: () => void) {
 }
 
 function getCartSnapshot(): CartItem[] {
-  return loadCart();
+  if (cachedSnapshot === null) {
+    cachedSnapshot = loadCart();
+  }
+  return cachedSnapshot;
 }
 
 function getCartServerSnapshot(): CartItem[] {

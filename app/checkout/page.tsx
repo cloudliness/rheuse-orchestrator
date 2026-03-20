@@ -45,6 +45,8 @@ export default function CheckoutPage() {
   const [zip, setZip] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
 
   useEffect(() => {
     document.title = "Checkout | Rheuse";
@@ -74,8 +76,55 @@ export default function CheckoutPage() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setSubmitted(true);
+    setCheckoutError("");
     const validationErrors = validate();
     setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) return;
+
+    setLoading(true);
+
+    const payload = {
+      lineItems: cartItems.map((item) => ({
+        sku: item.product.sku,
+        name: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+      })),
+      email,
+      shippingAddress: {
+        firstName,
+        lastName,
+        address1,
+        address2: address2 || undefined,
+        city,
+        state,
+        zip,
+      },
+    };
+
+    fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(
+            (data as { error?: string }).error || "Something went wrong"
+          );
+        }
+        return res.json() as Promise<{ url: string }>;
+      })
+      .then((data) => {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      })
+      .catch((err: Error) => {
+        setCheckoutError(err.message);
+        setLoading(false);
+      });
   }
 
   if (cartItems.length === 0) return null;
@@ -409,19 +458,23 @@ export default function CheckoutPage() {
             </fieldset>
 
             {/* Place Order */}
+            {checkoutError && (
+              <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive font-body">
+                {checkoutError}
+              </div>
+            )}
             <Button
               type="submit"
               variant="accent"
               size="lg"
               className="w-full mt-8"
-              aria-disabled="true"
-              disabled
+              disabled={loading}
             >
-              Checkout coming soon
+              {loading ? "Redirecting to payment…" : "Pay with Stripe"}
             </Button>
             <p className="text-xs text-muted-foreground text-center mt-2">
-              We&apos;re putting the finishing touches on our checkout
-              experience. Hang tight — it&apos;ll be worth the wait.
+              You&apos;ll be redirected to Stripe&apos;s secure checkout to
+              complete your payment.
             </p>
           </form>
 

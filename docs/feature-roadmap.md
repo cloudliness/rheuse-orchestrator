@@ -8,7 +8,7 @@
 | 1 | Brand & Product Definition | **Complete** | Brand name: Rheuse, guidelines, tone of voice, 30-SKU product catalog |
 | 2 | Static Catalog & Design System | **Complete** | Design tokens, component library, product pages, category pages |
 | 3 | Cart & Checkout Flow | **Complete** | Cart functionality, checkout form, address validation |
-| 4 | Payments + Orders + Emails | Not started | Stripe integration, order lifecycle, confirmation emails |
+| 4 | Payments + Orders + Emails | **Complete** | Stripe integration, order lifecycle, confirmation emails |
 | 5 | Legal, SEO, Performance, A11y | Not started | Legal pages, meta tags, Lighthouse ≥ 90, WCAG 2.2 AA |
 | 6 | Launch + Post-launch Iteration | Not started | Production deployment, monitoring, iteration based on data |
 
@@ -51,13 +51,12 @@
 
 ## Phase 4 — Payments + Orders + Emails
 
-- [ ] Stripe Products and Prices created
-- [ ] Stripe Checkout Session API route
-- [ ] Webhook handler for payment events
-- [ ] Order confirmation page
-- [ ] Order confirmation email
-- [ ] Database schema for orders and order items
-- [ ] Admin order view (basic)
+- [x] Stripe Checkout Session API route (`/api/checkout`)
+- [x] Webhook handler for payment events (`/api/webhook`)
+- [x] Order confirmation page (`/order-confirmation`)
+- [x] Order confirmation email (Resend integration)
+- [x] In-memory order store with types (`lib/orders.ts`) — DB migration Phase 5+
+- [x] Admin order view (`/admin/orders`)
 
 ## Phase 5 — Legal, SEO, Performance, A11y
 
